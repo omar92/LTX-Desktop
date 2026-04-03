@@ -382,8 +382,6 @@ class VideoGenerationHandler(StateHandlerBase):
         if settings.seed_locked:
             logger.info("Using locked seed: %s", settings.locked_seed)
             return settings.locked_seed
-        if self.config.dev_mode:
-            return 1000
         return int(time.time()) % 2147483647
 
     def _make_output_path(self) -> Path:

@@ -57,8 +57,6 @@ class ImageGenerationHandler(StateHandlerBase):
         if settings.seed_locked:
             seed = settings.locked_seed
             logger.info("Using locked seed for image: %s", seed)
-        elif self.config.dev_mode:
-            seed = 1000
         else:
             seed = int(time.time()) % 2147483647
 
