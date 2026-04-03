@@ -6,8 +6,14 @@ export const APP_FOLDER_NAME = 'LTXDesktop'
 
 function resolveUserDataPath(): string {
   if (process.platform === 'win32') {
-    const projectRoot = path.resolve(app.getAppPath(), '..')
-    return path.join(projectRoot, 'ltxAppData')
+    const explicitAppData = process.env.LTX_APP_DATA_DIR?.trim()
+    if (explicitAppData) {
+      return explicitAppData
+    }
+
+    const baseDir = process.env.PORTABLE_EXECUTABLE_DIR?.trim()
+      || path.dirname(process.execPath)
+    return path.join(baseDir, 'ltxAppData')
   }
   if (process.platform === 'darwin') {
     return path.join(
