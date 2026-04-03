@@ -6,9 +6,8 @@ export const APP_FOLDER_NAME = 'LTXDesktop'
 
 function resolveUserDataPath(): string {
   if (process.platform === 'win32') {
-    const localAppData = process.env.LOCALAPPDATA
-      || path.join(os.homedir(), 'AppData', 'Local')
-    return path.join(localAppData, APP_FOLDER_NAME)
+    const projectRoot = path.resolve(app.getAppPath(), '..')
+    return path.join(projectRoot, 'ltxAppData')
   }
   if (process.platform === 'darwin') {
     return path.join(
