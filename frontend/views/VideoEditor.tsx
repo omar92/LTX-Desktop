@@ -103,6 +103,31 @@ export function VideoEditor(props: VideoEditorProps) {
   const editorStore = editorStoreRef.current
   if (!editorStore) throw new Error('Editor store failed to initialize')
 
+  useEffect(() => {
+    editorStore.getState().setStateWithoutHistory((prev) => {
+      let nextEditorModel = prev.editorModel
+
+      if (nextEditorModel.assets !== currentProject.assets) {
+        nextEditorModel = {
+          ...nextEditorModel,
+          assets: currentProject.assets,
+        }
+      }
+
+      nextEditorModel = applyPendingClipTakeUpdate(nextEditorModel, pendingRetakeUpdate)
+      nextEditorModel = applyPendingClipTakeUpdate(nextEditorModel, pendingIcLoraUpdate)
+
+      if (nextEditorModel === prev.editorModel) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        editorModel: nextEditorModel,
+      }
+    })
+  }, [currentProject.assets, editorStore, pendingRetakeUpdate, pendingIcLoraUpdate])
+
   return (
     <EditorStoreProvider store={editorStore}>
       <VideoEditorWithStore
