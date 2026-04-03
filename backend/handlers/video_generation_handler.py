@@ -152,7 +152,7 @@ class VideoGenerationHandler(StateHandlerBase):
             )
 
             self._generation.complete_generation(output_path)
-            return GenerateVideoCompleteResponse(status="complete", video_path=output_path)
+            return GenerateVideoCompleteResponse(status="complete", video_path=output_path, seed=seed)
 
         except Exception as e:
             self._generation.fail_generation(str(e))
@@ -335,7 +335,7 @@ class VideoGenerationHandler(StateHandlerBase):
 
             self._generation.update_progress("complete", 100, total_steps, total_steps)
             self._generation.complete_generation(str(output_path))
-            return GenerateVideoCompleteResponse(status="complete", video_path=str(output_path))
+            return GenerateVideoCompleteResponse(status="complete", video_path=str(output_path), seed=seed)
 
         except Exception as e:
             self._generation.fail_generation(str(e))
@@ -393,6 +393,7 @@ class VideoGenerationHandler(StateHandlerBase):
             raise HTTPError(409, "Generation already in progress")
 
         generation_id = self._make_generation_id()
+        seed = self._resolve_seed()
         self._generation.start_api_generation(generation_id)
 
         audio_path = normalize_optional_path(req.audioPath)
@@ -522,7 +523,7 @@ class VideoGenerationHandler(StateHandlerBase):
 
             self._generation.update_progress("complete", 100, None, None)
             self._generation.complete_generation(str(output_path))
-            return GenerateVideoCompleteResponse(status="complete", video_path=str(output_path))
+            return GenerateVideoCompleteResponse(status="complete", video_path=str(output_path), seed=seed)
         except HTTPError as e:
             self._generation.fail_generation(e.detail)
             raise

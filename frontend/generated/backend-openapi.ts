@@ -462,6 +462,8 @@ export interface components {
         GenerateImageCompleteResponse: {
             /** Image Paths */
             image_paths: string[];
+            /** Seed */
+            seed: number;
             /**
              * Status
              * @constant
@@ -503,6 +505,8 @@ export interface components {
         };
         /** GenerateVideoCompleteResponse */
         GenerateVideoCompleteResponse: {
+            /** Seed */
+            seed: number;
             /**
              * Status
              * @constant
