@@ -8,11 +8,12 @@ if os.environ.get("BACKEND_DEBUG") == "1":
         import debugpy  # type: ignore[reportMissingImports]
 
         if not bool(debugpy.is_client_connected()):  # type: ignore[reportUnknownMemberType]
-            try:
-                # Connect to an already-listening IDE debugger (compound launch)
+            debug_mode = os.environ.get("BACKEND_DEBUG_MODE", "listen").lower()
+            if debug_mode == "connect":
+                # Optional mode for compound launch when the IDE is already listening.
                 debugpy.connect(("127.0.0.1", 5678))  # type: ignore[reportUnknownMemberType]
-            except (ConnectionRefusedError, ConnectionError, OSError):
-                # IDE not listening — start a debug server for manual attach
+            else:
+                # Default to listen mode to avoid noisy connection-refused logs.
                 debugpy.listen(("127.0.0.1", 5678))  # type: ignore[reportUnknownMemberType]
     except (ImportError, RuntimeError) as exc:
         print(f"Debugpy setup failed: {exc}", file=sys.stderr)
