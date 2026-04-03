@@ -4,6 +4,7 @@
 export interface GenerationParams {
   mode: 'text-to-video' | 'image-to-video' | 'audio-to-video' | 'text-to-image' | 'retake' | 'ic-lora'
   prompt: string
+  seed?: number
   model: string
   duration: number
   resolution: string

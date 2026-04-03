@@ -1003,6 +1003,7 @@ export function GenSpace() {
     imagePaths,
     error,
     reset,
+    seed,
   } = useGeneration()
 
   const {
@@ -1170,6 +1171,7 @@ export function GenSpace() {
           generationParams: {
             mode: genMode as 'text-to-video' | 'image-to-video' | 'audio-to-video',
             prompt: lastPrompt,
+            seed: seed ?? undefined,
             model: savedVideoSettings.model,
             duration: savedVideoSettings.duration,
             resolution: savedVideoSettings.videoResolution,
@@ -1197,7 +1199,7 @@ export function GenSpace() {
         logger.error(`Failed to persist generated video asset: ${err}`)
       }
     })()
-  }, [videoPath, currentProjectId, isGenerating, applyForcedVideoSettings, settings, inputImage, inputAudio, lastPrompt, addAsset, reset])
+  }, [videoPath, currentProjectId, isGenerating, applyForcedVideoSettings, settings, inputImage, inputAudio, lastPrompt, seed, addAsset, reset])
 
   // When retake completes, add as take or new asset
   useEffect(() => {
@@ -1382,6 +1384,7 @@ export function GenSpace() {
               generationParams: {
                 mode: genMode,
                 prompt: lastPrompt,
+                seed: seed ?? undefined,
                 model: 'fast',
                 duration: 5,
                 resolution: settings.imageResolution,
@@ -1405,7 +1408,7 @@ export function GenSpace() {
         }
       })()
     }
-  }, [imagePaths, currentProjectId, isGenerating])
+  }, [imagePaths, currentProjectId, isGenerating, seed, lastPrompt, settings, addAsset])
   
   const handleGenerate = async () => {
     if (mode === 'ic-lora') {
@@ -1880,6 +1883,9 @@ export function GenSpace() {
               <p className="text-zinc-500 text-sm mt-1">
                 {selectedAsset.resolution} • {selectedAsset.duration ? `${selectedAsset.duration}s` : 'Image'}
               </p>
+              {selectedAsset.type === 'image' && selectedAsset.generationParams?.seed !== undefined && (
+                <p className="text-zinc-500 text-sm mt-1">Seed: {selectedAsset.generationParams.seed}</p>
+              )}
             </div>
           </div>
         </div>

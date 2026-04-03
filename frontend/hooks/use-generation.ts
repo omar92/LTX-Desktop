@@ -11,6 +11,7 @@ interface GenerationState {
   imagePath: string | null
   imagePaths: string[]
   error: string | null
+  seed: number | null
 }
 
 type GenerateVideoRequest = Parameters<typeof ApiClient.generateVideo>[0]
@@ -91,6 +92,7 @@ export function useGeneration(): UseGenerationReturn {
     imagePath: null,
     imagePaths: [],
     error: null,
+    seed: null,
   })
 
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -113,6 +115,7 @@ export function useGeneration(): UseGenerationReturn {
       imagePath: null,
       imagePaths: [],
       error: null,
+      seed: null,
     })
 
     abortControllerRef.current = new AbortController()
@@ -201,6 +204,7 @@ export function useGeneration(): UseGenerationReturn {
           imagePath: null,
           imagePaths: [],
           error: null,
+          seed: (payload as { seed?: number }).seed ?? null,
         })
       } else if (payload.status === 'cancelled') {
         setState(prev => ({
@@ -296,6 +300,7 @@ export function useGeneration(): UseGenerationReturn {
       imagePath: null,
       imagePaths: [],
       error: null,
+      seed: null,
     })
 
     abortControllerRef.current = new AbortController()
@@ -360,6 +365,7 @@ export function useGeneration(): UseGenerationReturn {
           imagePath: rawPaths[0],
           imagePaths: rawPaths,
           error: null,
+          seed: (payload as { seed?: number }).seed ?? null,
         })
       } else if (payload.status === 'cancelled') {
         setState(prev => ({
@@ -397,6 +403,7 @@ export function useGeneration(): UseGenerationReturn {
       imagePath: null,
       imagePaths: [],
       error: null,
+      seed: null,
     })
   }, [])
 

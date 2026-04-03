@@ -395,6 +395,10 @@
             "title": "Image Paths",
             "type": "array"
           },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
           "status": {
             "const": "complete",
             "title": "Status",
@@ -403,7 +407,8 @@
         },
         "required": [
           "status",
-          "image_paths"
+          "image_paths",
+          "seed"
         ],
         "title": "GenerateImageCompleteResponse",
         "type": "object"
@@ -462,6 +467,10 @@
       },
       "GenerateVideoCompleteResponse": {
         "properties": {
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
           "status": {
             "const": "complete",
             "title": "Status",
@@ -474,7 +483,8 @@
         },
         "required": [
           "status",
-          "video_path"
+          "video_path",
+          "seed"
         ],
         "title": "GenerateVideoCompleteResponse",
         "type": "object"

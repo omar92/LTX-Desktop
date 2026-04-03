@@ -164,6 +164,7 @@ class SuggestGapPromptResponse(BaseModel):
 class GenerateVideoCompleteResponse(BaseModel):
     status: Literal["complete"]
     video_path: str
+    seed: int
 
 
 class GenerateVideoCancelledResponse(BaseModel):
@@ -176,6 +177,7 @@ GenerateVideoResponse: TypeAlias = GenerateVideoCompleteResponse | GenerateVideo
 class GenerateImageCompleteResponse(BaseModel):
     status: Literal["complete"]
     image_paths: list[str]
+    seed: int
 
 
 class GenerateImageCancelledResponse(BaseModel):
