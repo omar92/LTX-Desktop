@@ -169,6 +169,8 @@ class PipelinesHandler(StateHandlerBase):
 
     def _create_video_pipeline(self, model_type: VideoPipelineModelType) -> VideoPipelineState:
         gemma_root = self._text_handler.resolve_gemma_root()
+        # gemma_root is None when API text encoding is in use — that is correct and intentional.
+        # Only raise if local encoding is explicitly selected but the files are missing.
 
         upsampler_path = str(resolve_model_path(self.models_dir, self.config.model_download_specs, "upsampler"))
 

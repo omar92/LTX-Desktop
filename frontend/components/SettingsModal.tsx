@@ -178,6 +178,7 @@ function RefreshCw({ className }: { className?: string }) {
 
 export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProps) {
   const { settings, updateSettings, saveLtxApiKey, saveFalApiKey, saveGeminiApiKey, forceApiGenerations } = useAppSettings()
+  const electronAPI = window.electronAPI
   const onSettingsChange = (next: AppSettings) => updateSettings(next)
   const [activeTab, setActiveTab] = useState<TabId>('general')
   const [ltxApiKeyInput, setLtxApiKeyInput] = useState('')
@@ -206,6 +207,7 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
     file_exists: boolean
   } | null>(null)
   const [fp8ExportStarted, setFp8ExportStarted] = useState(false)
+  const [backendRestarting, setBackendRestarting] = useState(false)
 
   // Sync active tab with initialTab prop when modal opens
   useEffect(() => {
@@ -229,20 +231,20 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
 
   // Fetch app version when About tab is shown
   useEffect(() => {
-    if (activeTab !== 'about' || appVersion) return
-    window.electronAPI.getAppInfo().then(info => setAppVersion(info.version)).catch(() => {})
-  }, [activeTab, appVersion])
+    if (activeTab !== 'about' || appVersion || !electronAPI) return
+    electronAPI.getAppInfo().then(info => setAppVersion(info.version)).catch(() => {})
+  }, [activeTab, appVersion, electronAPI])
 
   // Fetch analytics state when modal opens
   useEffect(() => {
-    if (!isOpen) return
-    window.electronAPI.getAnalyticsState()
+    if (!isOpen || !electronAPI) return
+    electronAPI.getAnalyticsState()
       .then((state: { analyticsEnabled: boolean }) => setAnalyticsEnabled(state.analyticsEnabled))
       .catch(() => {})
-    window.electronAPI.getProjectAssetsPath()
+    electronAPI.getProjectAssetsPath()
       .then((p: string) => setProjectAssetsPath(p))
       .catch(() => {})
-  }, [isOpen])
+  }, [isOpen, electronAPI])
 
   // Fetch text encoder status when modal opens
   useEffect(() => {
@@ -427,15 +429,15 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
   const handleToggleAnalytics = () => {
     const next = !analyticsEnabled
     setAnalyticsEnabled(next)
-    window.electronAPI.setAnalyticsEnabled(next).catch(() => {})
+    electronAPI?.setAnalyticsEnabled(next).catch(() => {})
   }
 
   // Backend restart handler
-  const [backendRestarting, setBackendRestarting] = useState(false)
   const handleRestartBackend = async () => {
     setBackendRestarting(true)
     try {
-      await window.electronAPI.restartPythonBackend()
+      if (!electronAPI) return
+      await electronAPI.restartPythonBackend()
     } finally {
       setBackendRestarting(false)
     }
@@ -465,9 +467,10 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
   }
 
   const handleLoadModelLicense = async () => {
+    if (!electronAPI) return
     setModelLicenseLoading(true)
     try {
-      const text = await window.electronAPI.fetchLicenseText()
+      const text = await electronAPI.fetchLicenseText()
       setModelLicenseText(text)
       setShowModelLicense(true)
     } catch (e) {
@@ -478,9 +481,10 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
   }
 
   const handleLoadNotices = async () => {
+    if (!electronAPI) return
     setNoticesLoading(true)
     try {
-      const text = await window.electronAPI.getNoticesText()
+      const text = await electronAPI.getNoticesText()
       setNoticesText(text)
       setShowNotices(true)
     } catch (e) {
@@ -567,7 +571,8 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
                     variant="outline"
                     className="border-zinc-700 flex-shrink-0"
                     onClick={async () => {
-                      const result = await window.electronAPI.openProjectAssetsPathChangeDialog()
+                      if (!electronAPI) return
+                      const result = await electronAPI.openProjectAssetsPathChangeDialog()
                       if (result.success && result.path) {
                         setProjectAssetsPath(result.path)
                       }
@@ -1115,7 +1120,9 @@ export function SettingsModal({ isOpen, onClose, initialTab }: SettingsModalProp
                   <ApiKeyHelperRow
                     stopPropagation
                     label="Get FAL API key"
-                    onOpenKey={() => window.electronAPI.openFalApiKeyPage()}
+                    onOpenKey={() => {
+                      electronAPI?.openFalApiKeyPage()
+                    }}
                   />
                   <div className="flex items-center justify-between">
                     <div className={`text-xs px-2 py-1 rounded inline-flex items-center gap-1.5 ${
@@ -2008,11 +2015,13 @@ function basename(p: string): string {
 
 function LoraManager({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const loras = parseLoras(value)
+  const electronAPI = window.electronAPI
 
   const save = (next: LoraEntry[]) => onChange(JSON.stringify(next))
 
   const handleAdd = async () => {
-    const files = await window.electronAPI.showOpenFileDialog({
+    if (!electronAPI) return
+    const files = await electronAPI.showOpenFileDialog({
       title: 'Select LoRA (.safetensors)',
       filters: [{ name: 'LoRA weights', extensions: ['safetensors'] }],
       properties: ['openFile', 'multiSelections'],

@@ -495,6 +495,7 @@ class FakeFastVideoPipeline(_FakeVideoPipelineBase):
         attention_tile_size: int = 0,
         use_fp8_transformer: bool = False,
         gguf_transformer_path: str = "",
+        gguf_per_layer_quant: bool = True,
         vae_spatial_tile_size: int = 0,
         vae_temporal_tile_size: int = 0,
         pre_quantized_transformer_path: str = "",
@@ -502,7 +503,7 @@ class FakeFastVideoPipeline(_FakeVideoPipelineBase):
     ) -> "FakeFastVideoPipeline":
         del checkpoint_path, gemma_root, upsampler_path, device
         del transformer_device, block_swap_blocks_on_gpu, attention_tile_size
-        del use_fp8_transformer, gguf_transformer_path
+        del use_fp8_transformer, gguf_transformer_path, gguf_per_layer_quant
         del vae_spatial_tile_size, vae_temporal_tile_size
         del pre_quantized_transformer_path, loras
         pipeline = FakeFastVideoPipeline._singleton
@@ -523,6 +524,11 @@ class FakeFastVideoPipeline(_FakeVideoPipelineBase):
         num_steps: int = 8,
         stg_scale: float = 0.0,
         stg_block_index: int = 19,
+        sigma_schedule: str = "linear",
+        denoising_loop: str = "sd3",
+        ge_gamma: float = 0.0,
+        res2s_bongmath: bool = False,
+        res2s_bongmath_max_iter: int = 1,
     ) -> None:
         self._record_generate(
             {
@@ -537,6 +543,11 @@ class FakeFastVideoPipeline(_FakeVideoPipelineBase):
                 "num_steps": num_steps,
                 "stg_scale": stg_scale,
                 "stg_block_index": stg_block_index,
+                "sigma_schedule": sigma_schedule,
+                "denoising_loop": denoising_loop,
+                "ge_gamma": ge_gamma,
+                "res2s_bongmath": res2s_bongmath,
+                "res2s_bongmath_max_iter": res2s_bongmath_max_iter,
             }
         )
 

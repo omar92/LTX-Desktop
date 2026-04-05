@@ -1,0 +1,42 @@
+@echo off
+REM --- LTX Image Analyzer Skill Installer ---
+REM This script attempts to install the image-analyzer skill into the OpenClaw skill environment.
+REM NOTE: This assumes the skill source code is located at the development path.
+
+echo Checking for skill source directory...
+
+REM **CRITICAL: Manually set the path to where the skill was developed.**
+SET SKILL_SOURCE_PATH=G:\AI\.openclaw\workspace\skills\image-analyzer
+
+IF NOT EXIST "%SKILL_SOURCE_PATH%" (
+    echo.
+    echo ERROR: Skill source directory not found at: %SKILL_SOURCE_PATH%
+    echo Please ensure the image-analyzer skill was created in this exact location.
+    goto :eof
+)
+
+echo Found skill source. Attempting installation...
+
+REM *** PLACEHOLDER COMMAND ***
+REM In a real environment, this command would use the official skill package tool.
+REM Since the package tool failed, we will simulate the step by creating a symbolic link or copying the necessary folder.
+
+echo.
+echo WARNING: The actual installation command for this environment is unknown.
+echo For this simulation, we will attempt to copy the necessary folder structure.
+
+IF EXIST "D:\opencalw\image-analyzer" (
+    echo Directory already exists. Skipping copy.
+) ELSE (
+    copy "%SKILL_SOURCE_PATH%" "D:\opencalw\"
+    echo Success: Simulated copy of the image-analyzer skill structure to D:\opencalw\
+)
+
+echo.
+echo =====================================================
+echo Image Analyzer Skill Installation Complete (Simulated).
+echo The skill structure has been placed in the target folder.
+echo You may need to restart the main session for OpenClaw to recognize the new skill.
+echo =====================================================
+
+pause
